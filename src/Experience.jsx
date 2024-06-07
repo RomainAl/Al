@@ -9,12 +9,14 @@ import Planes from './Planes';
 import { useControls, button } from 'leva';
 import { useSpring } from '@react-spring/three';
 import useGame from './stores/useGame';
-
 // import Models from './Models';
+// import CameraControls2 from 'camera-controls';
+
 
 export default function Experience()
 {   
     const { width: w, height: h } = useThree((state) => state.viewport);
+    const { gl } = useThree();
     const refCam = useRef();
     useControls({
         MoveF: button(() => { refCam.current?.dolly(3, true)}),
@@ -63,13 +65,16 @@ export default function Experience()
         <CameraControls
             ref={refCam}
             enableZoom={true}
-            minPolarAngle={Math.PI/2}
-            maxPolarAngle={Math.PI/2}
+            minPolarAngle={0}
+            maxPolarAngle={Math.PI}
             smoothTime= {0.8}
             maxDistance= {8}
             minDistance= {0.5*w/h}
-            // verticalDragToForward = {true}
-            // touches={{one: THREE.TOUCH.ROTATE, two: THREE.TOUCH.DOLLY_PAN}}
+            azimuthRotateSpeed= {0.4}
+            dollySpeed= {0.7}
+            touches={{  one: 0, 
+                        two: 8, 
+                        three: 1}} // 1 = ROTATE, 8 = DOLLY, 0 = NONE
             />
         
         <PostProd/>

@@ -9,7 +9,7 @@ export default create(subscribeWithSelector((set) =>
             {   name: 'Performances',
                 position: new Vector3(0,0,1)
             }, 
-            {   name: 'Documentaires',
+            {   name: 'Documentaries',
                 position: new Vector3(1,0,0)
             }, 
             {   name: 'Clips',
