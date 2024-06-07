@@ -6,7 +6,7 @@ import { defineConfig } from 'vite'
 export default defineConfig ({
     root: 'src/',
     publicDir: '../public/',
-    base: '/Al/',
+    base: '/al/',
     plugins:
     [
         // Restart server on static/public file change

@@ -3,14 +3,18 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://romainal.github.io/al/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "deploy": "vercel --prod",
-    "preview": "vite preview"
+    "deploy_v": "vercel --prod",
+    "preview": "vite preview",
+    "predeploy" : "npm run build",
+    "deploy" : "gh-pages -d dist"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "4.2",
+    "gh-pages": "^6.1.1",
     "vite": "^5.2.10",
     "vite-plugin-restart": "^0.4.0"
   },
