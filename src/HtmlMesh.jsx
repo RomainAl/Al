@@ -22,7 +22,7 @@ export default function HtmlMesh({position}){
     return <>
         <animated.mesh 
             ref={refMesh}
-            castShadow 
+            // castShadow
             position={position}
             scale={ 0.40 } 
             onPointerDown={() => setClick(true)} 
