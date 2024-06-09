@@ -6,7 +6,7 @@ import PostProd from './PostProd';
 import Lights from './Lights';
 import HtmlMesh from './HtmlMesh';
 import Planes from './Planes';
-import { useControls, button } from 'leva';
+// import { useControls, button } from 'leva';
 import { useSpring } from '@react-spring/three';
 import useGame from './stores/useGame';
 // import Models from './Models';
@@ -18,16 +18,16 @@ export default function Experience()
     const { width: w, height: h } = useThree((state) => state.viewport);
     const { gl } = useThree();
     const refCam = useRef();
-    useControls({
-        MoveF: button(() => { refCam.current?.dolly(3, true)}),
-        MoveB: button(() => { refCam.current?.dolly(-3, true)}),
-        Rot0: button(() => { refCam.current?.setPosition(0, 0, refCam.current?.getPosition().length(), true) }),
-        Rot1: button(() => { refCam.current?.setPosition(refCam.current?.getPosition().length(), 0, 0, true) }),
-        Rot2: button(() => { refCam.current?.setPosition(0, 0, -refCam.current?.getPosition().length(), true) }),
-        Rot3: button(() => { refCam.current?.setPosition(-refCam.current?.getPosition().length(), 0, 0, true) }),
-    })
+    // useControls({
+    //     MoveF: button(() => { refCam.current?.dolly(3, true)}),
+    //     MoveB: button(() => { refCam.current?.dolly(-3, true)}),
+    //     Rot0: button(() => { refCam.current?.setPosition(0, 0, refCam.current?.getPosition().length(), true) }),
+    //     Rot1: button(() => { refCam.current?.setPosition(refCam.current?.getPosition().length(), 0, 0, true) }),
+    //     Rot2: button(() => { refCam.current?.setPosition(0, 0, -refCam.current?.getPosition().length(), true) }),
+    //     Rot3: button(() => { refCam.current?.setPosition(-refCam.current?.getPosition().length(), 0, 0, true) }),
+    // })
     
-    const gototaf = useGame((state) => state.gototaf);
+    const speedTransition = useGame((state) => state.speedTransition);
 
     useEffect(()=>{
         const unsubscribeGototaf = useGame.subscribe(
@@ -53,9 +53,10 @@ export default function Experience()
 
     const [springs] = useSpring(
         () => ({ 
-            from: { pos: [0,0,8], intensityL: 0 }, 
+            from: { pos: [0,0,7.5], intensityL: 0 }, 
             to: { pos: [0,0,0], intensityL: 0.05 },
-            config: { duration: 5000 }
+            delay: 1000,
+            config: { duration: 6000 }
             }));
 
     return <>
@@ -67,14 +68,18 @@ export default function Experience()
             enableZoom={true}
             minPolarAngle={0}
             maxPolarAngle={Math.PI}
-            smoothTime= {0.8}
+            smoothTime= {speedTransition}
             maxDistance= {8}
             minDistance= {0.5*w/h}
             azimuthRotateSpeed= {0.4}
             dollySpeed= {0.7}
-            touches={{  one: 0, 
+            touches={{  one: 8, 
                         two: 8, 
                         three: 1}} // 1 = ROTATE, 8 = DOLLY, 0 = NONE
+            mouseButtons={{ left: 0,
+                            right: 0,
+                            wheel: 8,
+                            middle: 0}}
             />
         
         <PostProd/>

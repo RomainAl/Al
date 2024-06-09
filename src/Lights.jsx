@@ -7,8 +7,8 @@ export default function Lights({position, intensityL})
     return <>
         <Float
             speed={1} // Animation speed, defaults to 1
-            rotation={[Math.PI / 2, Math.PI / 4, Math.PI / 3]} 
-            floatIntensity={5} // Up/down float intensity, works like a multiplier with floatingRange,defaults to 1
+            // rotation={[Math.PI / 2, Math.PI / 4, Math.PI / 3]} 
+            floatIntensity={4} // Up/down float intensity, works like a multiplier with floatingRange,defaults to 1
             floatingRange={[-0.1, 0.1, 0.1]} // Range of y-axis values the object will float within, defaults to [-0.1,0.1]
         >
             <TexturedSpotLight 

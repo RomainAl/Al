@@ -8,7 +8,6 @@ import useGame from "./stores/useGame";
 export default function App(){
     const [dpr, setDpr] = useState(2);
     const position = useGame((state)=>state.position)
-    // console.log(dpr);
 
     return <Canvas
             gl={{ antialias: true }}
@@ -25,7 +24,7 @@ export default function App(){
         >   
                 <PerformanceMonitor onIncline={() => setDpr(2)} onDecline={() => setDpr(1.5)} >
                     <Experience />
-                    {/* <Perf position="top-left" /> */}
+                    <Perf position="top-right" />
                 </PerformanceMonitor>
             </Canvas>
 }

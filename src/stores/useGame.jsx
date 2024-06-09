@@ -21,17 +21,31 @@ export default create(subscribeWithSelector((set) =>
             {   name: 'Captations',
                 position: new Vector3(0,1,0)
             }],
+        speedTransition: 0.8,
 
         phase: 'Restart',
         position: new Vector3(0,0,8),
-
+        tafcurrent: 0, // TODO
+        
         gototaf: (name) =>
         {
             set((state) =>
             {
-                return { phase: name, position: state.tafs.find(taf=>taf.name===name).position }
+                if (name != state.phase)
+                    return { phase: name, position: state.tafs.find(taf=>taf.name===name).position }
+                return {}
             })
         },
+
+        gototaf2: (tafcurrent) =>
+            {
+                set((state) =>
+                {
+                    if (tafcurrent != state.tafcurrent)
+                        return { tafcurrent: tafcurrent, position: state.tafs[tafcurrent].position }
+                    return {}
+                })
+            },
 
         restart: () =>
             {
