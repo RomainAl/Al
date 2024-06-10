@@ -24,25 +24,17 @@ export default create(subscribeWithSelector((set) =>
         speedTransition: 0.8,
 
         phase: 'Restart',
+        position_start: new Vector3(0,0,8),
         position: new Vector3(0,0,8),
-        tafcurrent: 0, // TODO
-        
-        gototaf: (name) =>
-        {
-            set((state) =>
-            {
-                if (name != state.phase)
-                    return { phase: name, position: state.tafs.find(taf=>taf.name===name).position }
-                return {}
-            })
-        },
+        tafcurrent: 0,
+        HtmlMeshScale: 0.4,
 
-        gototaf2: (tafcurrent) =>
+        gototaf: (tafcurrent) =>
             {
                 set((state) =>
                 {
                     if (tafcurrent != state.tafcurrent)
-                        return { tafcurrent: tafcurrent, position: state.tafs[tafcurrent].position }
+                        return { phase: 'Navigate', tafcurrent: tafcurrent, position: state.tafs[tafcurrent].position }
                     return {}
                 })
             },
@@ -51,7 +43,7 @@ export default create(subscribeWithSelector((set) =>
             {
                 set((state) =>
                 {
-                    return { phase: 'Restart', position: new Vector3(0,0,8) }
+                    return { phase: 'Restart', position:  state.position_start}
                 })
             },
     }

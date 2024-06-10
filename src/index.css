@@ -106,7 +106,7 @@ svg * {
   stroke-width: 1px;
 }
 
-.tl_circles, .tl_TheCircle {
+.tl_circles {
   fill: black;
   fill-opacity: 1;
   stroke: rgb(255, 255, 255);

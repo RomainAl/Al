@@ -2,33 +2,31 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { Wireframe } from '@react-three/drei';
 import { Html } from '@react-three/drei';
 import { useState, useRef, useEffect } from 'react';
-import { animated } from '@react-spring/three';
+import { animated, useSpring, useSpringRef } from '@react-spring/three';
 
-export default function HtmlMesh({position}){
+export default function HtmlMesh(props){
 
-    const { width: w, height: h } = useThree((state) => state.viewport);
+    const { viewport, camera } = useThree();
+    const w = viewport.width;
+    const h = viewport.height;
     const [op, setOp] = useState(0);
     const [click, setClick] = useState(false);
     const refMesh = useRef();
-
+    
     useFrame((state)=>{
         const algoCamDist = ((8 - state.camera.position.length())/8);
         setOp(algoCamDist);
         const ww = refMesh.current.scale.y * ((state.camera.position.length())/8 + w/h * algoCamDist);
-        refMesh.current.scale.x = ww;
-        refMesh.current.scale.z = ww;
     })
 
     return <>
+
         <animated.mesh 
             ref={refMesh}
-            // castShadow
-            position={position}
-            scale={ 0.40 } 
+            {...props}
             onPointerDown={() => setClick(true)} 
             onPointerLeave={() => setClick(false)}>
-            <boxGeometry />
-            {/* <meshBasicMaterial color="white" /> */}
+            <boxGeometry args={[1,1,1]}/>
             <Wireframe 
                 simplify={true} 
                 squeeze={true}

@@ -7,7 +7,7 @@ import Lights from './Lights';
 import HtmlMesh from './HtmlMesh';
 import Planes from './Planes';
 // import { useControls, button } from 'leva';
-import { useSpring } from '@react-spring/three';
+import { useSpring, useSpringRef } from '@react-spring/three';
 import useGame from './stores/useGame';
 // import Models from './Models';
 // import CameraControls2 from 'camera-controls';
@@ -16,8 +16,9 @@ import useGame from './stores/useGame';
 export default function Experience()
 {   
     const { width: w, height: h } = useThree((state) => state.viewport);
-    const { gl } = useThree();
     const refCam = useRef();
+    const {speedTransition, HtmlMeshScale, position_start} = useGame();
+    
     // useControls({
     //     MoveF: button(() => { refCam.current?.dolly(3, true)}),
     //     MoveB: button(() => { refCam.current?.dolly(-3, true)}),
@@ -26,10 +27,37 @@ export default function Experience()
     //     Rot2: button(() => { refCam.current?.setPosition(0, 0, -refCam.current?.getPosition().length(), true) }),
     //     Rot3: button(() => { refCam.current?.setPosition(-refCam.current?.getPosition().length(), 0, 0, true) }),
     // })
+
+    const [startAnim] = useSpring(
+        () => ({ 
+            from: { pos: [position_start.x, position_start.y, position_start.z-HtmlMeshScale/1.9], intensityL: 0 }, 
+            to: { pos: [0,0,0], intensityL: 0.05 },
+            delay: 1000,
+            config: { duration: 6000 }
+            }));
+
+    const [camDist, setCamDist] = useState(8);
+    const [camOrientationY, setCamOrientationY] = useState(Math.abs(position_start.y)>0.05? true : false);
     
-    const speedTransition = useGame((state) => state.speedTransition);
+    const camTransition = ()=>{
+        setCamDist(refCam.current?.getPosition().length());
+        setCamOrientationY(Math.abs(refCam.current?.getPosition().y)>0.05? true : false);
+    };
+
+    const {scale} = useSpring({
+        scale: camOrientationY?
+                [(HtmlMeshScale*(1-w/h)/(position_start.length()-0.5*HtmlMeshScale*w/h))*(camDist - 0.5*HtmlMeshScale*w/h)+HtmlMeshScale*w/h,
+                 (HtmlMeshScale*(1-w/h)/(position_start.length()-0.5*HtmlMeshScale*w/h))*(camDist - 0.5*HtmlMeshScale*w/h)+HtmlMeshScale*w/h,
+                  HtmlMeshScale]
+                :
+                [(HtmlMeshScale*(1-w/h)/(position_start.length()-0.5*HtmlMeshScale*w/h))*(camDist - 0.5*HtmlMeshScale*w/h)+HtmlMeshScale*w/h, 
+                  HtmlMeshScale, 
+                 (HtmlMeshScale*(1-w/h)/(position_start.length()-0.5*HtmlMeshScale*w/h))*(camDist - 0.5*HtmlMeshScale*w/h)+HtmlMeshScale*w/h],
+        config: { duration: 2000 }
+    })
 
     useEffect(()=>{
+        console.log("🚀 ~ useEffect ~ useEffect:", 'useEffect Experience Component')
         const unsubscribeGototaf = useGame.subscribe(
             (state) => state.position,
             (value) =>
@@ -45,19 +73,14 @@ export default function Experience()
             }
         )
 
+        refCam.current.addEventListener('transitionstart', camTransition);
+
         return () =>
             {
                 unsubscribeGototaf();
+                refCam.current.removeEventListener('transitionstart', camTransition);
             }
     }, [])
-
-    const [springs] = useSpring(
-        () => ({ 
-            from: { pos: [0,0,7.5], intensityL: 0 }, 
-            to: { pos: [0,0,0], intensityL: 0.05 },
-            delay: 1000,
-            config: { duration: 6000 }
-            }));
 
     return <>
         <color args={ [ 'black' ] } attach="background" />
@@ -70,7 +93,7 @@ export default function Experience()
             maxPolarAngle={Math.PI}
             smoothTime= {speedTransition}
             maxDistance= {8}
-            minDistance= {0.5*w/h}
+            minDistance= {0.5*HtmlMeshScale*w/h+0.33}
             azimuthRotateSpeed= {0.4}
             dollySpeed= {0.7}
             touches={{  one: 8, 
@@ -83,15 +106,15 @@ export default function Experience()
             />
         
         <PostProd/>
-        <Lights position={springs.pos} intensityL={springs.intensityL}/>
+        <Lights position={startAnim.pos} intensityL={startAnim.intensityL}/>
         <Suspense>
             <Model/>
             {/* <Models/> */}
         </Suspense>
-        <HtmlMesh position={springs.pos} />
+        <HtmlMesh position={startAnim.pos} scale={scale} />
         <Planes scale={ 15 } receiveShadow>
             <planeGeometry />
-            <meshStandardMaterial color="black"/>
+            <meshStandardMaterial color="black" metalness = {0.3} roughness = {0.8}/>
         </Planes>
 
     </>

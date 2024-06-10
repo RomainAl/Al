@@ -14,40 +14,37 @@ function Buttons(){
 function Timeline(){
     
     const screenSize = useScreenSize();
-    const state = useGame();
-    const tafs = state.tafs;
-    const gototaf = state.gototaf;
-    const phase = state.phase;
     const reftl_line = useRef();
     const reftl_circles = useRef([]);
     const btns = document.getElementsByClassName("button");
     const offsetY = 0;
 
-    const {restart, gototaf2, tafcurrent} = useGame();
+    const {tafs, gototaf, tafcurrent} = useGame();
     const bind = useDrag(({movement: [mx], first, last, memo, touches}) => {
         if (first) {
-            memo = [mx,touches, 1];
+            memo = [mx,touches, 1, false];
         }
         memo[1] += touches;
         memo[2] += 1;
 
-        if ((Math.abs(mx-memo[0]) > 200) && (memo[1]/memo[2]<1)){
-            console.log('goooo')
+        if ((Math.abs(mx-memo[0]) > 200)&&(!memo[3])){// && (memo[1]/memo[2]<1) && !memo[3] ){ // TODO MULTI TOUCHES ?
             let ii = (tafcurrent - Math.sign(mx-memo[0]))%tafs.length;
             ii = ii < 0? ii+5 : ii;
-            gototaf2(ii);
+            gototaf(ii);
             [...reftl_circles.current].map(c=>c.style.transform = 'scale(1)');
             reftl_circles.current[ii].style.transform = 'scale(1.5)';
+            memo[3] = true;
         }
-
+        
         return memo;
     });
 
     const goto = (event) => {
-        gototaf(event.target.id);
+        gototaf(event.target.getAttribute('data-id'));
+        [...reftl_circles.current].map(c=>c.style.transform = 'scale(1)');
         event.target.style.transform = 'scale(1.5)';
-        [...reftl_circles.current.filter(c=>c.id!=event.target.id)].map(c=>c.style.transform = 'scale(1)');
       };
+  
 
     useEffect(()=>{
 
@@ -82,7 +79,7 @@ function Timeline(){
     return <>
         <animated.svg className="timeline" {...bind()} style={{ touchAction: 'none'}}>
             <line ref={reftl_line} x1="0" x2="0" y1="0" y2="0" stroke="white" strokeWidth="1" />
-            {tafs.map((taf,i)=><circle onClick={goto} ref={(element) => reftl_circles.current[i] = element} key={i} className="tl_circles" id={taf.name} cx = "0" cy = "0" r = "13px"/>)}
+            {tafs.map((taf,i)=><circle onClick={goto} ref={(element) => reftl_circles.current[i] = element} key={i} data-id={i} className="tl_circles" id={taf.name} cx = "0" cy = "0" r = "13px"/>)}
             {/* <animated.circle
                 ref={reftl_TheCircle}
                 className="tl_TheCircle"
