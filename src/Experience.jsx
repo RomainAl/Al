@@ -40,8 +40,8 @@ export default function Experience()
     const [camOrientationY, setCamOrientationY] = useState(Math.abs(position_start.y)>0.05? true : false);
     
     const camTransition = ()=>{
-        setCamDist(refCam.current?.getPosition().length());
-        setCamOrientationY(Math.abs(refCam.current?.getPosition().y)>0.05? true : false);
+        setCamDist(refCam.current.getPosition().length());
+        setCamOrientationY(Math.abs(refCam.current.getPosition().y)>0.05? true : false);
     };
 
     const {scale} = useSpring({
@@ -57,28 +57,27 @@ export default function Experience()
     })
 
     useEffect(()=>{
-        console.log("🚀 ~ useEffect ~ useEffect:", 'useEffect Experience Component')
         const unsubscribeGototaf = useGame.subscribe(
             (state) => state.position,
             (value) =>
             {
                 if (value.length() > 1){
-                    refCam.current?.setPosition(value.x, value.y, value.z, true);
+                    refCam.current.setPosition(value.x, value.y, value.z, true);
                 } else {
-                    refCam.current?.setPosition(
-                        refCam.current?.getPosition().length()*value.x, 
-                        refCam.current?.getPosition().length()*value.y, 
-                        refCam.current?.getPosition().length()*value.z, true);
+                    refCam.current.setPosition(
+                        refCam.current.getPosition().length()*value.x, 
+                        refCam.current.getPosition().length()*value.y, 
+                        refCam.current.getPosition().length()*value.z, true);
                 }
             }
         )
 
-        refCam.current.addEventListener('transitionstart', camTransition);
+        refCam.current?.addEventListener('transitionstart', camTransition);
 
         return () =>
             {
                 unsubscribeGototaf();
-                refCam.current.removeEventListener('transitionstart', camTransition);
+                refCam.current?.removeEventListener('transitionstart', camTransition);
             }
     }, [])
 

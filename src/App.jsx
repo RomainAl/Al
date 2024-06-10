@@ -7,8 +7,9 @@ import useGame from "./stores/useGame";
 
 export default function App(){
     const [dpr, setDpr] = useState(2);
+    console.log("🚀 ~ App ~ dpr:", dpr);
     const position = useGame((state)=>state.position)
-
+    
     return <Canvas
             gl={{ antialias: true }}
             dpr={dpr}

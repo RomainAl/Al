@@ -79,7 +79,7 @@ function Timeline(){
     return <>
         <animated.svg className="timeline" {...bind()} style={{ touchAction: 'none'}}>
             <line ref={reftl_line} x1="0" x2="0" y1="0" y2="0" stroke="white" strokeWidth="1" />
-            {tafs.map((taf,i)=><circle onClick={goto} ref={(element) => reftl_circles.current[i] = element} key={i} data-id={i} className="tl_circles" id={taf.name} cx = "0" cy = "0" r = "13px"/>)}
+            {tafs.map((taf,i)=><circle onClick={goto} ref={(element) => reftl_circles.current[i] = element} key={i} data-id={i} className="tl_circles" id={taf.name} cx = "0" cy = "0" r = "17px"/>)}
             {/* <animated.circle
                 ref={reftl_TheCircle}
                 className="tl_TheCircle"
