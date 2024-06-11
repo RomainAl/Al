@@ -2,7 +2,7 @@ import { Float, useVideoTexture} from '@react-three/drei';
 import TexturedSpotLight from './TexturedSpotLight';
 import { animated } from '@react-spring/three';
 
-export default function Lights({position, intensityL})
+export default function Lights({position, intensityL, target})
 {
     return <>
         <Float
@@ -17,7 +17,8 @@ export default function Lights({position, intensityL})
                 intensity={5} 
                 angle={Math.PI/4} 
                 penumbra={1} 
-                position={position}/>
+                position={position}
+                target={target}/>
             <animated.pointLight 
                 castShadow 
                 intensity={5} 

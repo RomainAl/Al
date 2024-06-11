@@ -27,7 +27,7 @@ function Timeline(){
         memo[1] += touches;
         memo[2] += 1;
 
-        if ((Math.abs(mx-memo[0]) > 200)&&(!memo[3])){// && (memo[1]/memo[2]<1) && !memo[3] ){ // TODO MULTI TOUCHES ?
+        if ((Math.abs(mx-memo[0]) > 100)&&(!memo[3])){// && (memo[1]/memo[2]<1) && !memo[3] ){ // TODO MULTI TOUCHES ?
             let ii = (tafcurrent - Math.sign(mx-memo[0]))%tafs.length;
             ii = ii < 0? ii+5 : ii;
             gototaf(ii);

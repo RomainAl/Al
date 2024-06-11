@@ -7,14 +7,14 @@ export default function TexturedSpotLight(props)
 {
   const texture = useVideoTexture('./VideoTexture.mp4');
   // const texture = useTexture('./disturb.jpg');
-  const ref = useRef();
+  // const ref = useRef();
 
-  useFrame((state, delta) => {
-      ref.current.target = state.camera;
-  })
+  // useFrame((state, delta) => {
+  //     ref.current.target = state.camera;
+  // })
 
   return <animated.spotLight 
-        ref={ref}
+        // ref={ref}
         map={texture}
         // color={'#FFFFFF'}
         {...props}

@@ -4,11 +4,14 @@ import { useFrame, useThree } from '@react-three/fiber'
 import Model from './Model';
 import PostProd from './PostProd';
 import Lights from './Lights';
-import HtmlMesh from './HtmlMesh';
+import Monolith from './Monolith';
+import Pages from './Pages';
 import Planes from './Planes';
 // import { useControls, button } from 'leva';
 import { useSpring, useSpringRef } from '@react-spring/three';
 import useGame from './stores/useGame';
+import { Object3D } from 'three';
+
 // import Models from './Models';
 // import CameraControls2 from 'camera-controls';
 
@@ -17,7 +20,7 @@ export default function Experience()
 {   
     const { width: w, height: h } = useThree((state) => state.viewport);
     const refCam = useRef();
-    const {speedTransition, HtmlMeshScale, position_start} = useGame();
+    const {speedTransition, htmlMeshScale, position_start} = useGame();
     
     // useControls({
     //     MoveF: button(() => { refCam.current?.dolly(3, true)}),
@@ -30,29 +33,31 @@ export default function Experience()
 
     const [startAnim] = useSpring(
         () => ({ 
-            from: { pos: [position_start.x, position_start.y, position_start.z-HtmlMeshScale/1.9], intensityL: 0 }, 
+            from: { pos: [position_start.x, position_start.y, position_start.z-htmlMeshScale], intensityL: 0 }, 
             to: { pos: [0,0,0], intensityL: 0.05 },
-            delay: 1000,
+            delay: 10000,
             config: { duration: 6000 }
             }));
 
     const [camDist, setCamDist] = useState(8);
     const [camOrientationY, setCamOrientationY] = useState(Math.abs(position_start.y)>0.05? true : false);
-    
+    const [camTarget, setCamTarget] = useState();
     const camTransition = ()=>{
         setCamDist(refCam.current.getPosition().length());
         setCamOrientationY(Math.abs(refCam.current.getPosition().y)>0.05? true : false);
+
     };
 
-    const {scale} = useSpring({
+    const {scale, target} = useSpring({
         scale: camOrientationY?
-                [(HtmlMeshScale*(1-w/h)/(position_start.length()-0.5*HtmlMeshScale*w/h))*(camDist - 0.5*HtmlMeshScale*w/h)+HtmlMeshScale*w/h,
-                 (HtmlMeshScale*(1-w/h)/(position_start.length()-0.5*HtmlMeshScale*w/h))*(camDist - 0.5*HtmlMeshScale*w/h)+HtmlMeshScale*w/h,
-                  HtmlMeshScale]
+                [(htmlMeshScale*(1-w/h)/(position_start.length()-0.5*htmlMeshScale*w/h))*(camDist - 0.5*htmlMeshScale*w/h)+htmlMeshScale*w/h,
+                 (htmlMeshScale*(1-w/h)/(position_start.length()-0.5*htmlMeshScale*w/h))*(camDist - 0.5*htmlMeshScale*w/h)+htmlMeshScale*w/h,
+                  htmlMeshScale]
                 :
-                [(HtmlMeshScale*(1-w/h)/(position_start.length()-0.5*HtmlMeshScale*w/h))*(camDist - 0.5*HtmlMeshScale*w/h)+HtmlMeshScale*w/h, 
-                  HtmlMeshScale, 
-                 (HtmlMeshScale*(1-w/h)/(position_start.length()-0.5*HtmlMeshScale*w/h))*(camDist - 0.5*HtmlMeshScale*w/h)+HtmlMeshScale*w/h],
+                [(htmlMeshScale*(1-w/h)/(position_start.length()-0.5*htmlMeshScale*w/h))*(camDist - 0.5*htmlMeshScale*w/h)+htmlMeshScale*w/h, 
+                  htmlMeshScale, 
+                 (htmlMeshScale*(1-w/h)/(position_start.length()-0.5*htmlMeshScale*w/h))*(camDist - 0.5*htmlMeshScale*w/h)+htmlMeshScale*w/h],
+        target: camTarget,
         config: { duration: 2000 }
     })
 
@@ -62,17 +67,18 @@ export default function Experience()
             (value) =>
             {
                 if (value.length() > 1){
-                    refCam.current.setPosition(value.x, value.y, value.z, true);
+                    refCam.current?.setPosition(value.x, value.y, value.z, true);
                 } else {
-                    refCam.current.setPosition(
-                        refCam.current.getPosition().length()*value.x, 
-                        refCam.current.getPosition().length()*value.y, 
-                        refCam.current.getPosition().length()*value.z, true);
+                    refCam.current?.setPosition(
+                        refCam.current?.getPosition().length()*value.x, 
+                        refCam.current?.getPosition().length()*value.y, 
+                        refCam.current?.getPosition().length()*value.z, true);
                 }
             }
         )
 
         refCam.current?.addEventListener('transitionstart', camTransition);
+        setCamTarget(refCam.current?.camera);
 
         return () =>
             {
@@ -92,7 +98,7 @@ export default function Experience()
             maxPolarAngle={Math.PI}
             smoothTime= {speedTransition}
             maxDistance= {8}
-            minDistance= {0.5*HtmlMeshScale*w/h+0.33}
+            minDistance= {0.5*htmlMeshScale*w/h+0.33}
             azimuthRotateSpeed= {0.4}
             dollySpeed= {0.7}
             touches={{  one: 8, 
@@ -105,12 +111,13 @@ export default function Experience()
             />
         
         <PostProd/>
-        <Lights position={startAnim.pos} intensityL={startAnim.intensityL}/>
+        <Lights position={startAnim.pos} intensityL={startAnim.intensityL} target={target}/>
         <Suspense>
             <Model/>
             {/* <Models/> */}
         </Suspense>
-        <HtmlMesh position={startAnim.pos} scale={scale} />
+        <Monolith position={startAnim.pos} scale={scale} />
+        <Pages />
         <Planes scale={ 15 } receiveShadow>
             <planeGeometry />
             <meshStandardMaterial color="black" metalness = {0.3} roughness = {0.8}/>

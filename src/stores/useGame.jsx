@@ -27,7 +27,7 @@ export default create(subscribeWithSelector((set) =>
         position_start: new Vector3(0,0,8),
         position: new Vector3(0,0,8),
         tafcurrent: 0,
-        HtmlMeshScale: 0.4,
+        htmlMeshScale: 0.4,
 
         gototaf: (tafcurrent) =>
             {

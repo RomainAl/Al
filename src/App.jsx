@@ -25,7 +25,7 @@ export default function App(){
         >   
                 <PerformanceMonitor onIncline={() => setDpr(2)} onDecline={() => setDpr(1.5)} >
                     <Experience />
-                    {/* <Perf position="top-right" /> */}
+                    <Perf position="top-right" />
                 </PerformanceMonitor>
             </Canvas>
 }
