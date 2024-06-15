@@ -8,7 +8,7 @@ import useGame from "./stores/useGame";
 export default function App(){
     const [dpr, setDpr] = useState(2);
     console.log("🚀 ~ App ~ dpr:", dpr);
-    const position = useGame((state)=>state.position)
+    const position_start = useGame((state)=>state.position_start)
     
     return <Canvas
             gl={{ antialias: true }}
@@ -20,7 +20,7 @@ export default function App(){
                 fov: 75,
                 near: 0.1,
                 far: 13,
-                position: position
+                position: [position_start.x,position_start.y,position_start.z]
             } }
         >   
                 <PerformanceMonitor onIncline={() => setDpr(2)} onDecline={() => setDpr(1.5)} >

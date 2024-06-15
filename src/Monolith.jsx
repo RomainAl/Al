@@ -17,7 +17,7 @@ export default function Monolith(props){
             {...props}
             onPointerDown={() => setClick(true)} 
             onPointerLeave={() => setClick(false)}>
-            <boxGeometry args={[1,1,1]}/>
+            <boxGeometry/>
             <Wireframe 
                 simplify={true} 
                 squeeze={true}

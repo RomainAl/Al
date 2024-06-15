@@ -10,8 +10,7 @@ import Planes from './Planes';
 // import { useControls, button } from 'leva';
 import { useSpring, useSpringRef } from '@react-spring/three';
 import useGame from './stores/useGame';
-import { Object3D } from 'three';
-
+import { easings } from '@react-spring/web'
 // import Models from './Models';
 // import CameraControls2 from 'camera-controls';
 
@@ -20,7 +19,10 @@ export default function Experience()
 {   
     const { width: w, height: h } = useThree((state) => state.viewport);
     const refCam = useRef();
-    const {speedTransition, htmlMeshScale, position_start} = useGame();
+    // const {speedTransition, htmlMeshScale, position_start} = useGame();
+    const speedTransition = useGame((state) => state.speedTransition);
+    const position_start = useGame((state) => state.position_start);
+    const htmlMeshScale = useGame((state)=> state.htmlMeshScale);
     
     // useControls({
     //     MoveF: button(() => { refCam.current?.dolly(3, true)}),
@@ -33,34 +35,35 @@ export default function Experience()
 
     const [startAnim] = useSpring(
         () => ({ 
-            from: { pos: [position_start.x, position_start.y, position_start.z-htmlMeshScale], intensityL: 0 }, 
+            from: { pos: [position_start.x,position_start.y,position_start.z-htmlMeshScale], intensityL: 0 }, 
             to: { pos: [0,0,0], intensityL: 0.05 },
-            delay: 10000,
-            config: { duration: 6000 }
+            delay: 2000,
+            config: { duration: 6000, easing: easings.easeInOutCubic }
             }));
 
-    const [camDist, setCamDist] = useState(8);
-    const [camOrientationY, setCamOrientationY] = useState(Math.abs(position_start.y)>0.05? true : false);
     const [camTarget, setCamTarget] = useState();
-    const camTransition = ()=>{
-        setCamDist(refCam.current.getPosition().length());
-        setCamOrientationY(Math.abs(refCam.current.getPosition().y)>0.05? true : false);
-
+    const camTransition = (event)=>{
+        api.start({ scale: Math.abs(event.target.getPosition().y)>0.05?
+                    [(htmlMeshScale*(1-w/h)/(position_start.length()-0.5*htmlMeshScale*w/h))*(event.target.getPosition().length() - 0.5*htmlMeshScale*w/h)+htmlMeshScale*w/h,
+                     (htmlMeshScale*(1-w/h)/(position_start.length()-0.5*htmlMeshScale*w/h))*(event.target.getPosition().length() - 0.5*htmlMeshScale*w/h)+htmlMeshScale*w/h,
+                      htmlMeshScale]
+                    :
+                    [(htmlMeshScale*(1-w/h)/(position_start.length()-0.5*htmlMeshScale*w/h))*(event.target.getPosition().length() - 0.5*htmlMeshScale*w/h)+htmlMeshScale*w/h, 
+                      htmlMeshScale, 
+                     (htmlMeshScale*(1-w/h)/(position_start.length()-0.5*htmlMeshScale*w/h))*(event.target.getPosition().length() - 0.5*htmlMeshScale*w/h)+htmlMeshScale*w/h],
+                    target: camTarget
+                 });
     };
 
-    const {scale, target} = useSpring({
-        scale: camOrientationY?
-                [(htmlMeshScale*(1-w/h)/(position_start.length()-0.5*htmlMeshScale*w/h))*(camDist - 0.5*htmlMeshScale*w/h)+htmlMeshScale*w/h,
-                 (htmlMeshScale*(1-w/h)/(position_start.length()-0.5*htmlMeshScale*w/h))*(camDist - 0.5*htmlMeshScale*w/h)+htmlMeshScale*w/h,
-                  htmlMeshScale]
-                :
-                [(htmlMeshScale*(1-w/h)/(position_start.length()-0.5*htmlMeshScale*w/h))*(camDist - 0.5*htmlMeshScale*w/h)+htmlMeshScale*w/h, 
-                  htmlMeshScale, 
-                 (htmlMeshScale*(1-w/h)/(position_start.length()-0.5*htmlMeshScale*w/h))*(camDist - 0.5*htmlMeshScale*w/h)+htmlMeshScale*w/h],
+    const [{scale}, api] = useSpring(()=>({ scale: [htmlMeshScale,htmlMeshScale,htmlMeshScale],
+                                                    // target: camTarget,
+                                            config: { duration: 2000, easing: easings.easeOutQuad  }
+                                            }))
+    const {target} = useSpring({
         target: camTarget,
         config: { duration: 2000 }
     })
-
+        
     useEffect(()=>{
         const unsubscribeGototaf = useGame.subscribe(
             (state) => state.position,
@@ -114,9 +117,8 @@ export default function Experience()
         <Lights position={startAnim.pos} intensityL={startAnim.intensityL} target={target}/>
         <Suspense>
             <Model/>
-            {/* <Models/> */}
         </Suspense>
-        <Monolith position={startAnim.pos} scale={scale} />
+        <Monolith position={[0,Math.random()*0.2, 0]} scale={scale} />
         <Pages />
         <Planes scale={ 15 } receiveShadow>
             <planeGeometry />

@@ -15,7 +15,7 @@ export default function Lights({position, intensityL, target})
                 castShadow 
                 decay={0} 
                 intensity={5} 
-                angle={Math.PI/4} 
+                angle={Math.PI/3} 
                 penumbra={1} 
                 position={position}
                 target={target}/>

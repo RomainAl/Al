@@ -1,4 +1,7 @@
-@import url('https://rsms.me/inter/inter.css');
+@font-face {
+  font-family: 'InterVar';
+  src: url('./InterVariable.ttf');
+}
 
 html,
 body,
@@ -35,7 +38,7 @@ iframe {
   }
 
 body {
-  font-family: 'Inter var', sans-serif;
+  font-family: 'InterVar', sans-serif;
   animation: fade-in 5s ease 0s forwards;
 }
 

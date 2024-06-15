@@ -11,10 +11,10 @@ export default function Monolith(props){
     const wh = viewport.width/viewport.height;
     const h = size.height;
     const w = size.width;
-    const [op, setOp] = useState(0);
+//     const [op, setOp] = useState(0);
     const [click, setClick] = useState(false);
     const refMesh = useRef();
-    const {htmlMeshScale} = useGame();
+    const htmlMeshScale = useGame((state)=>state.htmlMeshScale);
     
     return <>
 
