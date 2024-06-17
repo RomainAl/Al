@@ -19,7 +19,6 @@ export default function Experience()
 {   
     const { width: w, height: h } = useThree((state) => state.viewport);
     const refCam = useRef();
-    // const {speedTransition, htmlMeshScale, position_start} = useGame();
     const speedTransition = useGame((state) => state.speedTransition);
     const position_start = useGame((state) => state.position_start);
     const htmlMeshScale = useGame((state)=> state.htmlMeshScale);
@@ -44,14 +43,13 @@ export default function Experience()
     const [camTarget, setCamTarget] = useState();
     const camTransition = (event)=>{
         api.start({ scale: Math.abs(event.target.getPosition().y)>0.05?
-                    [(htmlMeshScale*(1-w/h)/(position_start.length()-0.5*htmlMeshScale*w/h))*(event.target.getPosition().length() - 0.5*htmlMeshScale*w/h)+htmlMeshScale*w/h,
-                     (htmlMeshScale*(1-w/h)/(position_start.length()-0.5*htmlMeshScale*w/h))*(event.target.getPosition().length() - 0.5*htmlMeshScale*w/h)+htmlMeshScale*w/h,
+                    [(htmlMeshScale*(1-window.innerWidth/window.innerHeight)/(position_start.length()-0.5*htmlMeshScale*window.innerWidth/window.innerHeight))*(event.target.getPosition().length() - 0.5*htmlMeshScale*window.innerWidth/window.innerHeight)+htmlMeshScale*window.innerWidth/window.innerHeight,
+                     (htmlMeshScale*(1-window.innerWidth/window.innerHeight)/(position_start.length()-0.5*htmlMeshScale*window.innerWidth/window.innerHeight))*(event.target.getPosition().length() - 0.5*htmlMeshScale*window.innerWidth/window.innerHeight)+htmlMeshScale*window.innerWidth/window.innerHeight,
                       htmlMeshScale]
                     :
-                    [(htmlMeshScale*(1-w/h)/(position_start.length()-0.5*htmlMeshScale*w/h))*(event.target.getPosition().length() - 0.5*htmlMeshScale*w/h)+htmlMeshScale*w/h, 
+                    [(htmlMeshScale*(1-window.innerWidth/window.innerHeight)/(position_start.length()-0.5*htmlMeshScale*window.innerWidth/window.innerHeight))*(event.target.getPosition().length() - 0.5*htmlMeshScale*window.innerWidth/window.innerHeight)+htmlMeshScale*window.innerWidth/window.innerHeight, 
                       htmlMeshScale, 
-                     (htmlMeshScale*(1-w/h)/(position_start.length()-0.5*htmlMeshScale*w/h))*(event.target.getPosition().length() - 0.5*htmlMeshScale*w/h)+htmlMeshScale*w/h],
-                    target: camTarget
+                     (htmlMeshScale*(1-window.innerWidth/window.innerHeight)/(position_start.length()-0.5*htmlMeshScale*window.innerWidth/window.innerHeight))*(event.target.getPosition().length() - 0.5*htmlMeshScale*window.innerWidth/window.innerHeight)+htmlMeshScale*window.innerWidth/window.innerHeight]
                  });
     };
 
@@ -63,7 +61,19 @@ export default function Experience()
         target: camTarget,
         config: { duration: 2000 }
     })
-        
+    
+    useEffect(()=>{ // TODO SURE ??
+        api.start({ scale: Math.abs(refCam.current.getPosition().y)>0.05?
+            [(htmlMeshScale*(1-window.innerWidth/window.innerHeight)/(position_start.length()-0.5*htmlMeshScale*window.innerWidth/window.innerHeight))*(refCam.current.getPosition().length() - 0.5*htmlMeshScale*window.innerWidth/window.innerHeight)+htmlMeshScale*window.innerWidth/window.innerHeight,
+             (htmlMeshScale*(1-window.innerWidth/window.innerHeight)/(position_start.length()-0.5*htmlMeshScale*window.innerWidth/window.innerHeight))*(refCam.current.getPosition().length() - 0.5*htmlMeshScale*window.innerWidth/window.innerHeight)+htmlMeshScale*window.innerWidth/window.innerHeight,
+              htmlMeshScale]
+            :
+            [(htmlMeshScale*(1-window.innerWidth/window.innerHeight)/(position_start.length()-0.5*htmlMeshScale*window.innerWidth/window.innerHeight))*(refCam.current.getPosition().length() - 0.5*htmlMeshScale*window.innerWidth/window.innerHeight)+htmlMeshScale*window.innerWidth/window.innerHeight, 
+              htmlMeshScale, 
+             (htmlMeshScale*(1-window.innerWidth/window.innerHeight)/(position_start.length()-0.5*htmlMeshScale*window.innerWidth/window.innerHeight))*(refCam.current.getPosition().length() - 0.5*htmlMeshScale*window.innerWidth/window.innerHeight)+htmlMeshScale*window.innerWidth/window.innerHeight]
+         });
+    }, [w,h]);
+
     useEffect(()=>{
         const unsubscribeGototaf = useGame.subscribe(
             (state) => state.position,
@@ -101,7 +111,7 @@ export default function Experience()
             maxPolarAngle={Math.PI}
             smoothTime= {speedTransition}
             maxDistance= {8}
-            minDistance= {0.5*htmlMeshScale*w/h+0.33}
+            minDistance= {0.5*htmlMeshScale*window.innerWidth/window.innerHeight+0.33}
             azimuthRotateSpeed= {0.4}
             dollySpeed= {0.7}
             touches={{  one: 8, 
@@ -118,8 +128,8 @@ export default function Experience()
         <Suspense>
             <Model/>
         </Suspense>
-        <Monolith position={[0,Math.random()*0.2, 0]} scale={scale} />
-        <Pages />
+        <Monolith position={startAnim.pos} scale={scale} />
+        {/* <Pages htmlMeshScale={htmlMeshScale}/> */}
         <Planes scale={ 15 } receiveShadow>
             <planeGeometry />
             <meshStandardMaterial color="black" metalness = {0.3} roughness = {0.8}/>
